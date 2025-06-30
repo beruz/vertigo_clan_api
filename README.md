@@ -11,6 +11,8 @@ The API allows you to:
 - List all clans (with optional region filter and creation date sorting)
 - Delete clans
 
+You can try the API endpoints by using the base URL (deployed on Google Cloud Run): https://vertigo-clan-api-443395115098.europe-west1.run.app
+
 ---
 
 ## Database Structure
