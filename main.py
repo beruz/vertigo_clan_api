@@ -5,6 +5,7 @@ from typing import List, Optional
 from fastapi import FastAPI, HTTPException, Depends, Query
 from sqlalchemy import select,desc
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+from sqlalchemy.exc import OperationalError
 
 from models import Base, Clan
 from schemas import ClanIn, ClanOut, ClanCreateResponse, ClanDeleteResponse
@@ -25,8 +26,15 @@ SessionLocal = async_sessionmaker(engine, expire_on_commit=False)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+    print("Starting lifespan setup...")
+    try:
+        async with engine.begin() as conn:
+            print("DB connection started")
+            await conn.run_sync(Base.metadata.create_all)
+            print("Tables created")
+    except OperationalError as e:
+        print(f"DB connection failed: {e}")
+        raise
     yield
     await engine.dispose()
 
